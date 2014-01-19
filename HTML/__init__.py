@@ -12,7 +12,7 @@ class HTML_Attribute:
     @property
     def __str__(self):
         if not self is None:
-            return Template("$name=\"$value\"").substitute(dict(name=self.name, value=self.value))
+            return Template('$name="$value"').substitute(dict(name=self.name, value=self.value))
         return ""
 
 
@@ -51,7 +51,10 @@ class HTML_Element:
         for i in self.content:
             content += str(i)
         d = dict(name=self.type, id=self.name, contents=content, style=str(self.attr))
-        return Template("<$name id=\"$id\" $style> $contents</$name>").substitute(d)
+        if self.name!="":
+            return Template("<$name id=\"$id\" $style> $contents</$name>").substitute(d)
+        else:
+            return Template("<$name $style> $contents</$name>").substitute(d)
 
 
 class Cell(HTML_Element):
@@ -63,8 +66,6 @@ class Row(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self, t="tr")
 
-    def __str__(self):
-        return super().__str__()
 
 
 class Table(HTML_Element):
@@ -104,6 +105,34 @@ class Body(HTML_Element):
 class Paragraph(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self,"p")
+
+
+
+class FormattedText(HTML_Element):
+    def __init__(self,fmt):
+        assert isinstance(fmt,str)
+        HTML_Element.__init__(self,fmt)
+
+    @property
+    def __str__(self):
+        return HTML_Element.__str__
+
+
+class Bold(FormattedText):
+    def __init__(self):
+        FormattedText.__init__(self,"b")
+
+    @property
+    def __str__(self):
+        return FormattedText.__str__
+
+class Italic(FormattedText):
+    def __init__(self):
+        FormattedText.__init__(self,"i")
+
+class Underline(FormattedText):
+    def __init__(self):
+        FormattedText.__init__(self,"u")
 
 class Title(HTML_Element):
     def __init__(self):
