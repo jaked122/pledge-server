@@ -8,11 +8,15 @@ class CSS_Property:
         self.name = name
         self.value = value
 
+    def __lt__(self, other):
+        assert isinstance(other, CSS_Property)
+        return self.name<other.name
+
     def __str__(self):
         from string import Template
 
         d = dict(name=self.name, value=self.value)
-        return Template("$name = $value \n").substitute(d)
+        return Template("\t$name : $value \n").substitute(d)
 
 
 class CSS_Class:
@@ -23,6 +27,7 @@ class CSS_Class:
     def addDirective(self, dir):
         assert isinstance(dir, CSS_Property)
         self.directives.append(dir)
+        self.directives.sort()
 
     def __str__(self):
         from string import Template
@@ -31,7 +36,7 @@ class CSS_Class:
         for i in self.directives:
             a += str(i)
         d = dict(name=self.name, content=a)
-        return Template("$name{ \n $content \n }").substitute(d)
+        return Template("$name{ \n$content\n}").substitute(d)
 
 
 class Stylesheet:
@@ -41,3 +46,9 @@ class Stylesheet:
     def add_class(self, css):
         assert isinstance(css, CSS_Class)
         self.fmts.append(css)
+
+    def __str__(self):
+        s = ""
+        for i in self.fmts:
+            s += u"{0}\n".format(str(i))
+        return s

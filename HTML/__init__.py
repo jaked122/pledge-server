@@ -9,11 +9,9 @@ class HTML_Attribute:
         self.name = name
         self.value = va
 
-    @property
+
     def __str__(self):
-        if not self is None:
-            return Template('$name="$value"').substitute(dict(name=self.name, value=self.value))
-        return ""
+        return Template('$name="$value"').substitute(dict(name=self.name, value=self.value))
 
 
 class Attribute_Container:
@@ -21,7 +19,7 @@ class Attribute_Container:
         self.attr = list()
 
     def append(self, attr):
-        assert issubclass(HTML_Attribute)
+        assert isinstance(attr, HTML_Attribute)
         self.attr.append(attr)
 
     def __str__(self):
@@ -43,7 +41,8 @@ class HTML_Element:
         self.attr.append(attr)
 
     def add_content(self, content):
-        assert isinstance(content, str) or issubclass(content, HTML_Element)
+        assert isinstance(content, str) or issubclass(type(content), HTML_Element)
+        assert not isinstance(content, HTML_Declr)
         self.content.append(content)
 
     def __str__(self):
@@ -51,10 +50,12 @@ class HTML_Element:
         for i in self.content:
             content += str(i)
         d = dict(name=self.type, id=self.name, contents=content, style=str(self.attr))
-        if self.name!="":
-            return Template("<$name id=\"$id\" $style> $contents</$name>").substitute(d)
+        if self.name != "":
+            return Template("<$name id=\"$id\" $style> \n$contents\n</$name>").substitute(d)
         else:
-            return Template("<$name $style> $contents</$name>").substitute(d)
+            if len(self.attr.attr) == 0:
+                return Template("<$name>\n $contents \n</$name>").substitute(d)
+            return Template("<$name $style>\n $contents\n</$name>").substitute(d)
 
 
 class Cell(HTML_Element):
@@ -67,12 +68,16 @@ class Row(HTML_Element):
         HTML_Element.__init__(self, t="tr")
 
 
-
 class Table(HTML_Element):
     def __init__(self):
-        HTML_Element.__init__(self, t="Table")
+        HTML_Element.__init__(self, t="table")
 
     def add_row(self, asc):
+        """
+        Add a row to the table. Creates a row Object and Cell objects for all
+        of the contents of the list
+        @param asc: The list of things which are to be added.
+        """
         #List for storing the "Corrected" contents
         c = list()
         #Check that the elements of the list are HTML elements or strings
@@ -93,25 +98,30 @@ class Table(HTML_Element):
 
 
     def getCell(self, row, col):
-        return self.rows[row][col]
+        """
+        Get a cell from the table for manipulation.
+        @rtype : Cell
+        """
+        return self.content[row].content[col]
 
     def setCell(self, row, col, content):
         self.content[row].content[col].content = content
 
+
 class Body(HTML_Element):
     def __init__(self):
-        HTML_Element.__init__(self,"body")
+        HTML_Element.__init__(self, "body")
+
 
 class Paragraph(HTML_Element):
     def __init__(self):
-        HTML_Element.__init__(self,"p")
-
+        HTML_Element.__init__(self, "p")
 
 
 class FormattedText(HTML_Element):
-    def __init__(self,fmt):
-        assert isinstance(fmt,str)
-        HTML_Element.__init__(self,fmt)
+    def __init__(self, fmt):
+        assert isinstance(fmt, str)
+        HTML_Element.__init__(self, fmt)
 
     @property
     def __str__(self):
@@ -120,24 +130,76 @@ class FormattedText(HTML_Element):
 
 class Bold(FormattedText):
     def __init__(self):
-        FormattedText.__init__(self,"b")
+        FormattedText.__init__(self, "b")
 
     @property
     def __str__(self):
         return FormattedText.__str__
 
+
 class Italic(FormattedText):
     def __init__(self):
-        FormattedText.__init__(self,"i")
+        FormattedText.__init__(self, "i")
+
 
 class Underline(FormattedText):
     def __init__(self):
-        FormattedText.__init__(self,"u")
+        FormattedText.__init__(self, "u")
+
+
+class Anchor(HTML_Element):
+    def __init__(self, href):
+        HTML_Element.__init__(self, "a")
+        self.attr.append(HTML_Attribute("href", href))
+
+
+class Header(HTML_Element):
+    def __init__(self, level):
+        HTML_Element.__init__(self, "h{0}".format(str(level)))
+
+
+class HTML_Declr(HTML_Element):
+    def __init__(self):
+        HTML_Element.__init__(self, "html")
+
+
+class Head(HTML_Element):
+    def __init__(self):
+        HTML_Element.__init__(self, "head")
+
+    def add_content(self, content):
+        assert isinstance(content, Title)
+
 
 class Title(HTML_Element):
     def __init__(self):
-        HTML_Element.__init__(self,t="title")
+        HTML_Element.__init__(self, t="title")
 
-    def add_content(self,content):
-        assert isinstance(content,str)
+    def add_content(self, content):
+        assert isinstance(content, str)
         self.content.append(content)
+
+
+class List_Element(HTML_Element):
+    def __init__(self):
+        HTML_Element.__init__(self, "li")
+
+
+class List(HTML_Element):
+    def __init__(self, ordered=False):
+        if ordered:
+            HTML_Element.__init__(self, "ol")
+        else:
+            HTML_Element.__init__(self, "ul")
+
+    def add_content(self, content):
+        if not isinstance(content,List_Element):
+            i = List_Element()
+            i.add_content(content)
+            self.content.append(i)
+        else:
+            self.content.append(content)
+
+class Centered(HTML_Element):
+    def __init__(self):
+        HTML_Element.__init__(self,"center")
