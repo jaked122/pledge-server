@@ -21,17 +21,19 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
         global PledgeServerInstance
         g = Memberpage(PledgeServerInstance)
         query = self.path.split('?')
-        #self.send_header("Content-Type", "text/html")
-        self.send_response(200)
-        #self.end_headers()
+        #The response must be sent first.
+
         h = parse.urlparse(self.requestline)
         m = parse.parse_qs(h.query)
 
         if query[0] == "/members":
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
             pub = False
             authentication_error = False
-            if m["public"] is not None:
-                if m["user"] is not None:
+            if "public" in m:
+                if "user" in m:
                     #check that the authentication is correct
                     pub = not PledgeServerInstance.database.check_user(m["user"], m["password"])
                     authentication_error = True
@@ -43,8 +45,11 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
                 g.add_pending_message(
                     HTML.Convenience.create_message(style=("style", "color:red"),
                                                     content="Error: Login does not exist. Try again."))
-            l = g.retrieve(public=pub, alumni=False).encode('utf-8')
-
+            l = str(g.retrieve(public=pub, alumni=False)).encode('utf-8')
+            if query[0] == "/css":
+                self.send_response(200)
+                self.send_header("Content-type", "stylesheet/css")
+                self.end_headers()
             self.wfile.write(l)
 
 

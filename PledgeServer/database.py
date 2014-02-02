@@ -69,7 +69,8 @@ class Database:
     def get_members(self, includealumni=False):
         i = self.db.cursor()
         final_list = list()
-        i.execute("SELECT * FROM MEMBERS")
+        #Retrieve the members and sort by their roster number.
+        i.execute("SELECT * FROM MEMBERS ORDER BY ROSTER")
         if not includealumni:
             import datetime
 

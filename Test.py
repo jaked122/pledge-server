@@ -17,7 +17,7 @@ c.getCell(0, 1).add_content(e)
 c.getCell(0, 1).name = "Hellow"
 print(str(c))
 try:
-    able = HTML.HTML_Declr()
+    able = HTML.HTMLDeclr()
     able.add_content(able)
 except:
     print("HTML declaration nesting prevented")
@@ -48,7 +48,7 @@ import http.server as server
 class Custom_handler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.request
-        c = HTML.HTML_Declr()
+        c = HTML.HTMLDeclr()
         b = HTML.Body()
         p = HTML.Paragraph()
         p.add_content("Hello from ASIGPHI server")

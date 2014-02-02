@@ -51,7 +51,7 @@ class HTML_Element:
 
     def add_content(self, content):
         assert isinstance(content, str) or issubclass(type(content), HTML_Element)
-        assert not isinstance(content, HTML_Declr)
+        assert not isinstance(content, HTMLDeclr)
         self.content.append(content)
 
     def __str__(self):
@@ -132,18 +132,12 @@ class FormattedText(HTML_Element):
         assert isinstance(fmt, str)
         HTML_Element.__init__(self, fmt)
 
-    @property
-    def __str__(self):
-        return HTML_Element.__str__
 
 
 class Bold(FormattedText):
     def __init__(self):
         FormattedText.__init__(self, "b")
 
-    @property
-    def __str__(self):
-        return FormattedText.__str__
 
 
 class Italic(FormattedText):
@@ -167,17 +161,49 @@ class Header(HTML_Element):
         HTML_Element.__init__(self, "h{0}".format(str(level)))
 
 
-class HTML_Declr(HTML_Element):
+class HTMLDeclr(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self, "html")
+
+    def add_content(self, content):
+        if isinstance(content, Head):
+            #The head should generally be the first element.
+            self.content.insert(0, content)
+        else:
+            #Otherwise let the superclass handle it.
+            HTML_Element.add_content(self, content)
+
+    def get_body(self):
+        """
+        Get the body Element of the HTML page
+        @return: the Body of the html page, or None in case it does not exist.
+        """
+        for i in self.content:
+            if isinstance(i, Body):
+                return i
+        return None
+
+    def get_head(self):
+        """
+        Get the head of the HTML element, or None, in case it doesn't exist.
+        @return: The head, or none should it not exist.
+        """
+        for i in self.content:
+            if isinstance(i, Head):
+                return i
+        return None
 
 
 class Head(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self, "head")
+        h = HTML_Element(t="meta")
+        h.add_attribute(("http-equiv", "Content-Type"))
+        h.add_attribute(("content", "text/html"))
+        self.add_content(h)
 
     def add_content(self, content):
-        assert isinstance(content, Title)
+        super().add_content(content)
 
 
 class Title(HTML_Element):
