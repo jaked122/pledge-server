@@ -38,7 +38,16 @@ class HTML_Element:
         self.content = list()
 
     def add_attribute(self, attr):
-        self.attr.append(attr)
+        """
+        Add an attribute to the HTML element
+        @param attr: Either a tuple with (name,value) or a HTML_Element
+        @return: None
+        """
+        if isinstance(attr, HTML_Attribute):
+            self.attr.append(attr)
+        else:
+            assert isinstance(attr, tuple)
+            self.attr.append(HTML_Attribute(attr[0], attr[1]))
 
     def add_content(self, content):
         assert isinstance(content, str) or issubclass(type(content), HTML_Element)
@@ -180,6 +189,18 @@ class Title(HTML_Element):
         self.content.append(content)
 
 
+class Form(HTML_Element):
+    def __init__(self):
+        HTML_Element.__init__(self, t="form")
+
+
+class Input(HTML_Element):
+    def __init__(self, type, name):
+        HTML_Element.__init__(self, t="text")
+        assert type in ["text", "submit"]
+        self.add_attribute(HTML_Attribute("name", name))
+
+
 class List_Element(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self, "li")
@@ -193,13 +214,14 @@ class List(HTML_Element):
             HTML_Element.__init__(self, "ul")
 
     def add_content(self, content):
-        if not isinstance(content,List_Element):
+        if not isinstance(content, List_Element):
             i = List_Element()
             i.add_content(content)
             self.content.append(i)
         else:
             self.content.append(content)
 
+
 class Centered(HTML_Element):
     def __init__(self):
-        HTML_Element.__init__(self,"center")
+        HTML_Element.__init__(self, "center")

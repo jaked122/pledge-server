@@ -25,7 +25,7 @@ except:
 import HTML.Css
 
 goober = HTML.Css.Stylesheet()
-gobbler = HTML.Css.CSS_Class("body")
+gobbler = HTML.Css.CSSClass("body")
 goober.add_class(gobbler)
 gobbler.addDirective(HTML.Css.CSS_Property("border", "Dashed solid solid Dash"))
 gobbler.addDirective(HTML.Css.CSS_Property("color", "#0FC0D0"))

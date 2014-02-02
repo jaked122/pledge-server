@@ -19,7 +19,7 @@ class CSS_Property:
         return Template("\t$name : $value \n").substitute(d)
 
 
-class CSS_Class:
+class CSSClass:
     def __init__(self, name):
         self.name = name
         self.directives = list()
@@ -44,7 +44,7 @@ class Stylesheet:
         self.fmts = list()
 
     def add_class(self, css):
-        assert isinstance(css, CSS_Class)
+        assert isinstance(css, CSSClass)
         self.fmts.append(css)
 
     def __str__(self):
