@@ -31,7 +31,7 @@ class Page:
         t = Title()
         t.add_content(title)
         j.add_content(t)
-        h.add_content(h)
+        h.add_content(j)
         b = Body()
         for i in self.message:
             b.add_content(i)
