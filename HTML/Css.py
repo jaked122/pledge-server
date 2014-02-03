@@ -25,8 +25,12 @@ class CSSClass:
         self.directives = list()
 
     def addDirective(self, dir):
-        assert isinstance(dir, CSS_Property)
-        self.directives.append(dir)
+        if isinstance(dir, CSS_Property):
+            self.directives.append(dir)
+        else:
+            assert isinstance(dir, tuple)
+            d = CSS_Property(dir[0], dir[1])
+            self.directives.append(d)
         self.directives.sort()
 
     def __str__(self):
