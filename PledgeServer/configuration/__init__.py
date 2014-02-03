@@ -14,7 +14,7 @@ class Configuration:
             #load no values
             pass
         else:
-            with open("configuration.txt") as file:
+            with open("configuration.txt", 'r') as file:
                 for f in iter(file.readline):
                     assert isinstance(f, str)
                     c = f.split(' ')
@@ -27,12 +27,19 @@ class Configuration:
                             self.values[n] = list()
                             for i in range(3, len(c)):
                                 self.values[n].append(c[i])
-                    else:
-                        if t == 'string':
-                            tmp = ""
-                            for i in range(3, len(c)):
-                                tmp += "{0} ".format(c[i])
-                            self.values[n] = tmp.replace('\\n', '\n')
+
+                    if t == 'string':
+                        tmp = ""
+                        for i in range(3, len(c)):
+                            tmp += "{0} ".format(c[i])
+                        self.values[n] = tmp.replace('\\n', '\n')
+
+                    if t == 'path':
+                        #Turn it into a directory name.
+                        n = "/" + n
+                        p = c[3]
+                        #dynamic module loading for the Win.
+                        self.values[n] = __import__(p)
 
     def save(self):
         with open("configuration.txt") as file:

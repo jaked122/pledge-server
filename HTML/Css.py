@@ -16,7 +16,7 @@ class CSS_Property:
         from string import Template
 
         d = dict(name=self.name, value=self.value)
-        return Template("\t$name : $value \n").substitute(d)
+        return Template('\t$name : $value; \n').substitute(d)
 
 
 class CSSClass:
