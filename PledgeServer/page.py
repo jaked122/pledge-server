@@ -1,13 +1,19 @@
 __author__ = 'awhite'
 
 from HTML import *
+import PledgeServer.GenericPageGenerator as _GP_
 
 
-class Page:
+class Page(_GP_.GenericPage):
+    """
+    A slightly less generic version of the GenericPage type.
+     Generates mostly correct HTML and can make something relatively nice looking.
+    """
     master = None
 
     def __init__(self, server):
-        self.master = server
+        super().__init__(server)
+        self.content_type = "text/html"
         self.message = list()
 
     def add_pending_message(self, m):

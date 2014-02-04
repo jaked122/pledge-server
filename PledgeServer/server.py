@@ -46,6 +46,13 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
                                                     content="Error: Login does not exist. Try again."))
             l = str(g.retrieve(public=pub, alumni=False)).encode('utf-8')
             self.wfile.write(l)
+        if query[0] in PledgeServerInstance.config.values:
+            c = PledgeServerInstance.config.values[query[0]]
+            d = c.handler(PledgeServerInstance)
+            self.send_response(200)
+            self.send_header("Content-type", d.content_type)
+            self.end_headers()
+            self.wfile.write(str(d.retrieve(query[0])).encode('utf-8'))
 
 
 class PServer:

@@ -20,6 +20,9 @@ class Configuration:
             with open("configuration.txt", 'r') as file:
                 for f in file:
                     assert isinstance(f, str)
+                    #ignore comments using that all powerful character, the Hash sign
+                    if f[0] == '#':
+                        continue
                     c = f.split(' ')
                     t = c[0]
                     n = c[1]
@@ -40,7 +43,7 @@ class Configuration:
                         n = "/" + n
                         p = c[2]
                         #dynamic module loading for the Win.
-                        self.values[n] = __import__(p)
+                        self.values[n] = __import__(p.rstrip('\n'))
                     else:
                         if t == 'string':
                             tmp = ""
