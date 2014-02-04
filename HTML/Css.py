@@ -10,23 +10,30 @@ class CSS_Property:
 
     def __lt__(self, other):
         assert isinstance(other, CSS_Property)
-        return self.name<other.name
+        return self.name < other.name
 
     def __str__(self):
         from string import Template
 
         d = dict(name=self.name, value=self.value)
-        return Template('\t$name : $value; \n').substitute(d)
+        return Template("\t$name : $value;\n").substitute(d)
 
 
 class CSSClass:
+    """
+    A simple CSS class Generator
+    """
     def __init__(self, name):
         self.name = name
         self.directives = list()
 
-    def addDirective(self, dir):
-        assert isinstance(dir, CSS_Property)
-        self.directives.append(dir)
+    def add_directive(self, dir):
+        if isinstance(dir, CSS_Property):
+            self.directives.append(dir)
+        else:
+            assert isinstance(dir, tuple)
+            d = CSS_Property(dir[0], dir[1])
+            self.directives.append(d)
         self.directives.sort()
 
     def __str__(self):

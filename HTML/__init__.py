@@ -133,11 +133,9 @@ class FormattedText(HTML_Element):
         HTML_Element.__init__(self, fmt)
 
 
-
 class Bold(FormattedText):
     def __init__(self):
         FormattedText.__init__(self, "b")
-
 
 
 class Italic(FormattedText):
@@ -192,6 +190,80 @@ class HTMLDeclr(HTML_Element):
             if isinstance(i, Head):
                 return i
         return None
+
+
+class Style(HTML_Element):
+    import HTML.Css as _css_
+
+    def __init__(self, t="text/css"):
+        """
+        Initialize an HTML style tag with inbuilt CSS generator.
+        @param t: the mimetype, Should probably be left alone.
+        @return: A style element.
+        """
+        super().__init__("style")
+        self.content = self._css_.Stylesheet()
+        self.add_attribute(("type", t))
+
+    def add_content(self, content):
+        self.content.add_class(content)
+
+    def add_class(self, tup):
+        """
+        Add a class to the internal stylesheet.
+        @param tup: A tuple of form (name,(dir1n,dir1v)...)
+        @return: None
+        @rtype:None
+        """
+        c = self._css_.CSSClass(tup[0])
+        for i in range(1, len(tup)):
+            c.add_directive(tup[i])
+        self.add_content(c)
+
+    def __str__(self):
+        return "<style>\n{0}\n</style>".format(str(self.content))
+
+
+class Div(HTML_Element):
+    def __init__(self, Class):
+        """
+        Initialize the frustratingly abstract divider.
+        @param Class: The style class for the divider. Due to the reliance on CSS styling, this is important.
+        @return:
+        """
+        super().__init__(t="div")
+        self.add_attribute(("class", Class))
+
+
+
+class HTMLSidebarGen(HTMLDeclr):
+    """
+    Generates a page with a sidebar in order to simplify the usage of such things.
+    """
+
+    def __init__(self, title):
+        """
+        Initialize an HTML page with a sidebar
+        @param title: The title of the page.
+        @return: the object, I think.
+        """
+        super().__init__()
+        self.add_content(Head())
+        self.add_content(Body())
+        t = Title()
+        t.add_content(title)
+        self.get_head().add_content(t)
+        self.sidebar = Div("sidebar")
+        self.page_content = Div("content")
+        self.get_body().add_content(self.sidebar)
+        self.get_body().add_content(self.page_content)
+        style = Style()
+        #add style information to the style element
+        style.add_class(("div.sidebar", ("float", "right"), ("width", "20%")))
+        self.sidebar_style=style
+        #add the style element to the header.
+        self.get_head().add_content(style)
+
 
 
 class Head(HTML_Element):
