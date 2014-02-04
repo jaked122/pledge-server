@@ -37,7 +37,6 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
                     #check that the authentication is correct
                     pub = not PledgeServerInstance.database.check_user(m["user"], m["password"])
                     authentication_error = True
-
             self.wfile.write("<!DOCTYPE html>\n".encode('utf-8'))
             if authentication_error:
                 import HTML.Convenience
@@ -46,15 +45,14 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
                     HTML.Convenience.create_message(style=("style", "color:red"),
                                                     content="Error: Login does not exist. Try again."))
             l = str(g.retrieve(public=pub, alumni=False)).encode('utf-8')
-            if query[0] == "/css":
-                self.send_response(200)
-                self.send_header("Content-type", "stylesheet/css")
-                self.end_headers()
             self.wfile.write(l)
 
 
 class PServer:
     def __init__(self):
+        import PledgeServer.configuration as configur
+
+        self.config = configur.Configuration()
         self.database = dbs.Database()
         self.http_server = HTTPServer(('', 8080), PledgeServerHandler)
         setinstance(self)

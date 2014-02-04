@@ -29,4 +29,10 @@ class Page:
         h = HTMLSidebarGen(title=title)
         for i in self.message:
             h.page_content.add_content(i)
+        if "sidebar" in self.master.config.values:
+            v = self.master.config.values["sidebar"]
+            for c in v:
+                i = Anchor(c[1])
+                i.add_content(c[0])
+                h.sidebar.add_content(i)
         return h
