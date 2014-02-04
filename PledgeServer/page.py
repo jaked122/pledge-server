@@ -23,17 +23,10 @@ class Page:
         """
         Obtain a webpage with default content with the messages and elements found in the
         message queue
-        @rtype : HTMLDeclr
-        @return: An HTMLDeclr with the properties specified
+        @rtype : HTMLSidebarGen
+        @return: An HTMLSidebarGen with the properties specified
         """
-        h = HTMLDeclr()
-        j = Head()
-        t = Title()
-        t.add_content(title)
-        j.add_content(t)
-        h.add_content(j)
-        b = Body()
+        h = HTMLSidebarGen(title=title)
         for i in self.message:
-            b.add_content(i)
-        h.add_content(b)
+            h.page_content.add_content(i)
         return h

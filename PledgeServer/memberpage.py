@@ -18,13 +18,8 @@ class Memberpage(PledgeServer.page.Page):
         @param alumni: Whether or not to include alumni in the return
         """
         assert isinstance(self.master, PledgeServer.server.PServer)
-        h = super().retrieve()
-        title = Title()
-        title.add_content("Members")
-        head = Head()
-        head.add_content(title)
-        h.add_content(head)
-        b = h.get_body()
+        h = super().retrieve("Members")
+        b = h.page_content
         db = self.master.database
         assert isinstance(db, PledgeServer.database.Database)
         c = db.get_members()

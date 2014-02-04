@@ -40,13 +40,3 @@ class Configuration:
                                 self.values["sidebar"] = list()
                                 #format goes link-text,path
                             self.values["sidebar"].append((n, c[2]))
-
-
-    def save(self):
-        with open("configuration.txt") as file:
-            for i in self.values:
-                if isinstance(self.values[i], int):
-                    file.write("int {0} {1}".format(i, self.values[i]))
-                if isinstance(self.values[i], str):
-                    tmp = self.values[i].replace("\n", "\\n")
-                    file.write("string {0} {1}".format(i, tmp))

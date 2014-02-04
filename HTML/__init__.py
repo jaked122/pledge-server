@@ -237,6 +237,10 @@ class Div(HTML_Element):
 
 
 class HTMLSidebarGen(HTMLDeclr):
+    """
+    Generates a page with a sidebar in order to simplify the usage of such things.
+    """
+
     def __init__(self, title):
         """
         Initialize an HTML page with a sidebar
