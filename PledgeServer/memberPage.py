@@ -6,9 +6,9 @@ import PledgeServer.page
 import PledgeServer.server
 
 
-class Memberpage(PledgeServer.page.Page):
+class MemberPage(PledgeServer.page.Page):
     def __init__(self, server):
-        PledgeServer.page.Page.__init__(self, server)
+        super().__init__(server)
 
 
     def retrieve(self, public=True, alumni=False):
@@ -24,7 +24,7 @@ class Memberpage(PledgeServer.page.Page):
         assert isinstance(db, PledgeServer.database.Database)
         c = db.get_members()
         t = Table()
-        t.add_attribute(("border","1"))
+        t.add_attribute(("border", "1"))
         #Initialize the table
         t.add_row(["Name", "Roster Number", "Major", "Position", "Graduation Date", "Bio"])
         for i in c:

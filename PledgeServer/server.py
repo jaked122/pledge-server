@@ -5,7 +5,7 @@ from http.server import HTTPServer
 from urllib import parse
 
 import PledgeServer.database as dbs
-from PledgeServer.memberpage import Memberpage
+from PledgeServer.memberPage import MemberPage
 
 
 PledgeServerInstance = None
@@ -19,7 +19,7 @@ def setinstance(i):
 class PledgeServerHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global PledgeServerInstance
-        g = Memberpage(PledgeServerInstance)
+        g = MemberPage(PledgeServerInstance)
         query = self.path.split('?')
         #The response must be sent first.
 
