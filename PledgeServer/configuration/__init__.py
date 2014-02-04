@@ -33,6 +33,14 @@ class Configuration:
                             for i in range(3, len(c)):
                                 tmp += "{0} ".format(c[i])
                             self.values[n] = tmp.replace('\\n', '\n')
+                            #add content to the sidebar globally in the site.
+                        if t == "sidebarcontent":
+                            if not "sidebar" in self.values:
+                                #initialize the list
+                                self.values["sidebar"] = list()
+                                #format goes link-text,path
+                            self.values["sidebar"].append((n, c[2]))
+
 
     def save(self):
         with open("configuration.txt") as file:
