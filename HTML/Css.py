@@ -20,11 +20,14 @@ class CSS_Property:
 
 
 class CSSClass:
+    """
+    A simple CSS class Generator
+    """
     def __init__(self, name):
         self.name = name
         self.directives = list()
 
-    def addDirective(self, dir):
+    def add_directive(self, dir):
         if isinstance(dir, CSS_Property):
             self.directives.append(dir)
         else:
