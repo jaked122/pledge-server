@@ -32,11 +32,6 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
             self.end_headers()
             pub = False
             authentication_error = False
-            if "public" in m:
-                if "user" in m:
-                    #check that the authentication is correct
-                    pub = not PledgeServerInstance.database.check_user(m["user"], m["password"])
-                    authentication_error = True
             self.wfile.write("<!DOCTYPE html>\n".encode('utf-8'))
             if authentication_error:
                 import HTML.Convenience
@@ -46,13 +41,41 @@ class PledgeServerHandler(BaseHTTPRequestHandler):
                                                     content="Error: Login does not exist. Try again."))
             l = str(g.retrieve(public=pub, alumni=False)).encode('utf-8')
             self.wfile.write(l)
-        if query[0] in PledgeServerInstance.config.values:
-            c = PledgeServerInstance.config.values[query[0]]
-            d = c.handler(PledgeServerInstance)
-            self.send_response(200)
-            self.send_header("Content-type", d.content_type)
-            self.end_headers()
-            self.wfile.write(str(d.retrieve(query[0])).encode('utf-8'))
+        else:
+            if query[0] in PledgeServerInstance.config.values:
+                c = PledgeServerInstance.config.values[query[0]]
+                d = c.handler(PledgeServerInstance)
+                self.send_response(200)
+                self.send_header("Content-type", d.content_type)
+                self.end_headers()
+                self.wfile.write(str(d.retrieve(query[0])).encode('utf-8'))
+
+    def do_POST(self):
+        global PledgeServerInstance
+        query = self.requestline.split(" ")
+        print(query[1])
+        print(self.requestline)
+        if query[1] in PledgeServerInstance.config.values:
+            c = PledgeServerInstance.config.values[query[1]]
+            if query[1] != '/members':
+                d = c.handler(PledgeServerInstance)
+            else:
+                d = MemberPage(PledgeServerInstance)
+            length = int(self.headers["Content-length"])
+            postcontent = parse.parse_qs(self.rfile.read(length).decode('utf-8'))
+            import sqlite3
+
+            try:
+                d.post(postcontent)
+                self.send_response(204)
+                self.send_header("Content-type", d.content_type)
+                self.end_headers()
+            except sqlite3.IntegrityError:
+                print("Failed somewhere.")
+                self.send_response(204)
+
+        else:
+            print("No entry found for given path")
 
 
 class PServer:

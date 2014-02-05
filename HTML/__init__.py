@@ -235,7 +235,6 @@ class Div(HTML_Element):
         self.add_attribute(("class", Class))
 
 
-
 class HTMLSidebarGen(HTMLDeclr):
     """
     Generates a page with a sidebar in order to simplify the usage of such things.
@@ -260,10 +259,9 @@ class HTMLSidebarGen(HTMLDeclr):
         style = Style()
         #add style information to the style element
         style.add_class(("div.sidebar", ("float", "right"), ("width", "20%")))
-        self.sidebar_style=style
+        self.sidebar_style = style
         #add the style element to the header.
         self.get_head().add_content(style)
-
 
 
 class Head(HTML_Element):
@@ -294,16 +292,30 @@ class Form(HTML_Element):
 
 class Input(HTML_Element):
     def __init__(self, type, name):
-        HTML_Element.__init__(self, t="text")
+        HTML_Element.__init__(self, t="input")
         assert type in ["text", "submit"]
         self.add_attribute(HTML_Attribute("name", name))
+        self.add_attribute(HTML_Attribute("type", type))
+
+
+class Label(HTML_Element):
+    def __init__(self, target, text):
+        """
+        Create a label for a Form
+        @param target: A string naming the target input
+        @param text: The text to display
+        @return: The Label
+        """
+        super().__init__(t="label")
+        self.add_content(text)
+        self.add_attribute(("for", target))
 
 
 class List_Element(HTML_Element):
     def __init__(self):
         HTML_Element.__init__(self, "li")
 
-
+#HTML list structure.
 class List(HTML_Element):
     def __init__(self, ordered=False):
         if ordered:
@@ -312,6 +324,11 @@ class List(HTML_Element):
             HTML_Element.__init__(self, "ul")
 
     def add_content(self, content):
+        """
+        Add content to the list
+        @param content: A list element or string or HTML_Element
+        @return: none
+        """
         if not isinstance(content, List_Element):
             i = List_Element()
             i.add_content(content)

@@ -10,7 +10,6 @@ class MemberPage(PledgeServer.page.Page):
     def __init__(self, server):
         super().__init__(server)
 
-
     def retrieve(self, public=True, alumni=False):
         """
         Retrieve the membership list
@@ -30,6 +29,30 @@ class MemberPage(PledgeServer.page.Page):
         for i in c:
             t.add_row([i[0], str(i[1]), i[2], i[3], i[4], i[5]])
         b.add_content(t)
+        import HTML.Convenience
+
+        form = HTML.Convenience.generate_forms(("Member-name", "text"),
+                                               ("Roster-Number", "text"),
+                                               ("Major", "text"),
+                                               ("Position", "text"),
+                                               ("Graduation", "text"),
+                                               ("bio", "text"), action="#", pagebreak=True)
+        b.add_content(form)
         return h
 
+    def post(self, *args):
+        """
+        Post new member information.
+        @param args: In a tuple (name, roster number, major, house position,graduation, bio
+        @return: None
+        """
+        assert isinstance(args[0], dict)
+        a = args[0]
+        print(a["Roster-Number"])
+        b = (a["Member-name"][0], int(a["Roster-Number"][0]), a["Major"][0], a["Position"][0], a["Graduation"][0],
+             a["bio"][0])
+        #post to database.
+        self.master.database.post_member(b)
 
+        handler = MemberPage
+        return self.retrieve()

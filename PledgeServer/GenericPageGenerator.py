@@ -24,3 +24,11 @@ class GenericPage:
         @return: Any kind of object with __str__ defined.
         """
         return title
+
+    def post(self, *args):
+        """
+        Default post handling system. Raises an error.
+        @param args: Presumably, where you put the query options.
+        @return: Death and destruction
+        """
+        raise RuntimeError

@@ -1,3 +1,4 @@
 sidebar members /members
 path css csshandler
 path hello helloworldpage
+path members PledgeServer.memberPage
